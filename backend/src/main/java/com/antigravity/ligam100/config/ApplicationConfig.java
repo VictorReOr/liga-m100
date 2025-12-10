@@ -22,9 +22,8 @@ public class ApplicationConfig {
         return username -> userRepository.findByUsername(username)
                 .map(user -> new User(
                         user.getUsername(),
-                        user.getPasswordHash(),
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                ))
+                        user.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
