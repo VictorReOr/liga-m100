@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: liga-m100
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ligam100}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    user: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ligam100}
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: 86400000 # 1 day
+
+# Logging
+logging:
+  level:
+    com.antigravity.ligam100: ${LOG_LEVEL:INFO}
+    org.springframework.web: INFO
