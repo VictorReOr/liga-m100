@@ -2,7 +2,6 @@ package com.antigravity.ligam100.modules.auth.service;
 
 import com.antigravity.ligam100.modules.auth.dto.AuthResponse;
 import com.antigravity.ligam100.modules.auth.dto.LoginRequest;
-import com.antigravity.ligam100.modules.auth.domain.User;
 import com.antigravity.ligam100.modules.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,35 +15,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthService {
 
-        private final UserRepository userRepository;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtService jwtService;
-        private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-       public AuthResponse login(LoginRequest request) {
-    authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    request.getUsername(),
-                    request.getPassword()
-            )
-    );
+    // IMPORTANTE: este es el JWTService correcto
+    private final JwtService jwtService;
 
-    var user = userRepository.findByUsername(request.getUsername())
-            .orElseThrow();
+    private final AuthenticationManager authenticationManager;
 
-    // Añadimos el rol como claim
-    Map<String, Object> claims = Map.of(
-            "role", user.getRole().toString()
-    );
+    public AuthResponse login(LoginRequest request) {
 
-    // Generamos el token usando directamente la entidad User
-    var jwtToken = jwtService.generateToken(claims, user);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
-    return AuthResponse.builder()
-            .token(jwtToken)
-            .role(user.getRole().name())
-            .build();
-}
+        var user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow();
 
-        // Registration method would go here, configured by Admin usually
+        // Añadimos el rol como claim
+        Map<String, Object> claims = Map.of(
+                "role", user.getRole().toString()
+        );
+
+        // Generamos el token usando directamente la entidad User
+        var jwtToken = jwtService.generateToken(claims, user);
+
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .role(user.getRole().name())
+                .build();
+    }
+
 }
